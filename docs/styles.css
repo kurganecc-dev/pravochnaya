@@ -538,6 +538,161 @@ video { width: 100%; height: 100%; object-fit: contain; background: #08090a; }
   .premiere-dialog-actions .btn { width: 100%; }
 }
 
+
+/* First-run service launcher. */
+body.app-initializing #reviewView,
+body.app-initializing #briefView { display: none !important; }
+body.launcher-open .service-navigation,
+body.launcher-open .top-actions { display: none; }
+body.launcher-open .topbar { justify-content: center; }
+body.launcher-open .brand { flex: none; }
+
+.service-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.service-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(20,24,30,.07);
+  border-radius: 12px;
+  color: #454a50;
+  background: #fff;
+  font-weight: 800;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.service-home-btn:hover {
+  border-color: #cfd4d9;
+  background: #f8f9fa;
+  transform: translateY(-1px);
+}
+.service-home-icon { color: var(--accent); font-size: 17px; line-height: 1; }
+
+.service-launcher {
+  min-height: calc(100vh - 69px);
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 5vw, 72px) 18px;
+}
+.service-launcher-panel {
+  width: min(1040px, 100%);
+  text-align: center;
+}
+.service-launcher-brand {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border-radius: 21px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), #f24e54);
+  box-shadow: 0 18px 38px rgba(215,25,32,.25);
+  font-size: 30px;
+  font-weight: 950;
+}
+.service-launcher h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(34px, 6vw, 58px);
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+.service-launcher-lead {
+  max-width: 690px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.service-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 34px;
+  text-align: left;
+}
+.service-launcher-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  min-height: 265px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(20,24,30,.07);
+  border-radius: 24px;
+  color: var(--text);
+  background: #fff;
+  box-shadow: 0 14px 38px rgba(16,20,27,.08);
+  text-align: left;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.service-launcher-card::after {
+  content: '';
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  right: -80px;
+  bottom: -90px;
+  border-radius: 50%;
+  background: rgba(215,25,32,.055);
+}
+.service-launcher-card:hover,
+.service-launcher-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(215,25,32,.28);
+  box-shadow: 0 22px 50px rgba(16,20,27,.12);
+  outline: none;
+}
+.service-launcher-card-icon {
+  position: relative;
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-size: 23px;
+  font-weight: 900;
+}
+.service-launcher-card-review .service-launcher-card-icon { padding-left: 3px; }
+.service-launcher-card-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.service-launcher-card-copy strong {
+  font-size: clamp(22px, 3vw, 30px);
+  letter-spacing: -.025em;
+}
+.service-launcher-card-copy > span:last-child {
+  color: var(--muted);
+  line-height: 1.55;
+}
+.service-launcher-card-action {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+  align-self: end;
+  color: var(--accent);
+  font-weight: 850;
+}
+.service-launcher-note {
+  margin: 22px auto 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 /* Service sections: video review and production brief. */
 .brand { flex: 1 1 260px; }
 .top-actions { flex: 1 1 260px; justify-content: flex-end; }
@@ -830,4 +985,25 @@ video { width: 100%; height: 100%; object-fit: contain; background: #08090a; }
   .brief-result-actions .btn-primary,
   .brief-clear-btn { grid-column: auto; }
   .brief-live-badge { display: none; }
+}
+
+
+@media (max-width: 900px) {
+  .service-navigation { order: 3; width: 100%; }
+  .service-switch { flex: 1; }
+  .service-switch-btn { flex: 1; padding-inline: 10px; }
+}
+
+@media (max-width: 680px) {
+  body.launcher-open .brand { justify-content: center; }
+  .service-launcher { min-height: calc(100vh - 65px); padding: 34px 12px; }
+  .service-launcher-brand { width: 56px; height: 56px; border-radius: 18px; font-size: 26px; }
+  .service-launcher-lead { font-size: 14px; }
+  .service-launcher-grid { grid-template-columns: 1fr; margin-top: 24px; }
+  .service-launcher-card { min-height: 230px; padding: 19px; border-radius: 20px; }
+  .service-launcher-card-icon { width: 46px; height: 46px; border-radius: 14px; }
+  .service-launcher-card-action { grid-column: 1 / -1; }
+  .service-home-btn span:not(.service-home-icon) { display: none; }
+  .service-home-btn { min-width: 42px; justify-content: center; padding: 0 8px; }
+  .service-switch-btn { min-height: 38px; font-size: 11px; }
 }

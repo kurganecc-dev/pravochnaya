@@ -8,10 +8,14 @@ import {
 } from './lib/brief.js';
 
 const STORAGE_KEY = 'pravochnaya-production-brief-v1';
+const VIEW_STORAGE_KEY = 'pravochnaya-production-last-service-v1';
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
 const els = {
+  serviceLauncher: $('#serviceLauncher'),
+  serviceHomeBtn: $('#serviceHomeBtn'),
+  launchButtons: $$('[data-launch-view]'),
   reviewView: $('#reviewView'),
   briefView: $('#briefView'),
   reviewTopActions: $('#reviewTopActions'),
@@ -267,8 +271,40 @@ function clearBrief() {
   showToast('Бриф очищен');
 }
 
-function activateView(view, updateHash = true) {
+function rememberView(view) {
+  try { localStorage.setItem(VIEW_STORAGE_KEY, view); } catch { /* Storage can be disabled. */ }
+}
+
+function readRememberedView() {
+  try {
+    const value = localStorage.getItem(VIEW_STORAGE_KEY);
+    return value === 'brief' || value === 'review' ? value : '';
+  } catch {
+    return '';
+  }
+}
+
+function showLauncher(updateHash = true) {
+  document.body.classList.remove('app-initializing');
+  document.body.classList.add('launcher-open');
+  els.serviceLauncher.classList.remove('hidden');
+  els.reviewView.classList.add('hidden');
+  els.briefView.classList.add('hidden');
+  els.reviewTopActions.classList.add('hidden');
+  els.navButtons.forEach((button) => {
+    button.classList.remove('active');
+    button.setAttribute('aria-selected', 'false');
+  });
+  els.brandTitle.textContent = 'Видео · Продакшн';
+  els.brandSubtitle.textContent = 'выберите нужный сервис';
+  document.title = 'Сервисы видеопродакшена';
+  if (updateHash) history.replaceState(null, '', '#services');
+}
+
+function activateView(view, updateHash = true, remember = true) {
   const isBrief = view === 'brief';
+  document.body.classList.remove('app-initializing', 'launcher-open');
+  els.serviceLauncher.classList.add('hidden');
   els.reviewView.classList.toggle('hidden', isBrief);
   els.briefView.classList.toggle('hidden', !isBrief);
   els.reviewTopActions.classList.toggle('hidden', isBrief);
@@ -281,7 +317,26 @@ function activateView(view, updateHash = true) {
   els.brandSubtitle.textContent = isBrief ? 'заявка на видеопроизводство' : 'внутренний сервис продакшена';
   document.title = isBrief ? 'Бриф на видео — Продакшн' : 'Правки по видео — Продакшн';
   if (updateHash) history.replaceState(null, '', isBrief ? '#brief' : '#review');
+  if (remember) rememberView(view);
   if (isBrief) updateOutputClean();
+}
+
+function applyRouteFromLocation() {
+  if (location.hash === '#brief') {
+    activateView('brief', false);
+    return;
+  }
+  if (location.hash === '#review') {
+    activateView('review', false);
+    return;
+  }
+  if (location.hash === '#services') {
+    showLauncher(false);
+    return;
+  }
+  const remembered = readRememberedView();
+  if (remembered) activateView(remembered, false, false);
+  else showLauncher(false);
 }
 
 els.briefProjectTitle.value = state.projectTitle || '';
@@ -293,11 +348,14 @@ els.copyBriefBtn.addEventListener('click', copyBrief);
 els.downloadBriefBtn.addEventListener('click', downloadBrief);
 els.clearBriefBtn.addEventListener('click', clearBrief);
 els.navButtons.forEach((button) => button.addEventListener('click', () => activateView(button.dataset.appView)));
-window.addEventListener('hashchange', () => activateView(location.hash === '#brief' ? 'brief' : 'review', false));
-activateView(location.hash === '#brief' ? 'brief' : 'review', false);
+els.launchButtons.forEach((button) => button.addEventListener('click', () => activateView(button.dataset.launchView)));
+els.serviceHomeBtn.addEventListener('click', () => showLauncher());
+window.addEventListener('hashchange', applyRouteFromLocation);
+applyRouteFromLocation();
 
 window.PRAVOCHNAYA_BRIEF_API = Object.freeze({
   getSnapshot: () => JSON.parse(JSON.stringify(state)),
   getText: () => buildBriefText(state),
   open: () => activateView('brief'),
+  openServices: () => showLauncher(),
 });

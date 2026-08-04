@@ -8,7 +8,7 @@
   <title>Правки по видео — Продакшн</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="app-initializing">
   <header class="topbar">
     <div class="brand">
       <div class="brand-mark">Э</div>
@@ -17,10 +17,16 @@
         <div class="brand-subtitle" id="brandSubtitle">внутренний сервис продакшена</div>
       </div>
     </div>
-    <nav class="service-switch" role="tablist" aria-label="Раздел сервиса">
-      <button class="service-switch-btn active" type="button" role="tab" aria-selected="true" data-app-view="review">Правки</button>
-      <button class="service-switch-btn" type="button" role="tab" aria-selected="false" data-app-view="brief">Бриф</button>
-    </nav>
+    <div class="service-navigation">
+      <button class="service-home-btn" id="serviceHomeBtn" type="button" title="Открыть выбор сервисов" aria-label="Открыть выбор сервисов">
+        <span class="service-home-icon" aria-hidden="true">⌂</span>
+        <span>Сервисы</span>
+      </button>
+      <nav class="service-switch" role="tablist" aria-label="Раздел сервиса">
+        <button class="service-switch-btn active" type="button" role="tab" aria-selected="true" data-app-view="review">Правки по видео</button>
+        <button class="service-switch-btn" type="button" role="tab" aria-selected="false" data-app-view="brief">Бриф на съёмку</button>
+      </nav>
+    </div>
     <div class="top-actions" id="reviewTopActions">
       <button class="btn btn-ghost" id="newProjectBtn">Новый проект</button>
       <button class="btn btn-ghost" id="importBtn">Импорт JSON</button>
@@ -28,6 +34,39 @@
       <input id="importInput" type="file" accept="application/json" hidden />
     </div>
   </header>
+
+  <main class="service-launcher" id="serviceLauncher" aria-labelledby="serviceLauncherTitle">
+    <section class="service-launcher-panel">
+      <div class="service-launcher-brand" aria-hidden="true">Э</div>
+      <div class="eyebrow">Сервисы видеопродакшена</div>
+      <h1 id="serviceLauncherTitle">С чего начнём?</h1>
+      <p class="service-launcher-lead">Выберите задачу — откроется нужный инструмент. Ничего устанавливать не требуется, данные сохраняются в вашем браузере.</p>
+
+      <div class="service-launcher-grid">
+        <button class="service-launcher-card service-launcher-card-brief" type="button" data-launch-view="brief">
+          <span class="service-launcher-card-icon" aria-hidden="true">▤</span>
+          <span class="service-launcher-card-copy">
+            <span class="eyebrow">Нужно заказать видео</span>
+            <strong>Заполнить бриф</strong>
+            <span>Ответьте на вопросы о задаче, сроках, формате и бюджете. В конце получите готовый текст для отправки продакшену.</span>
+          </span>
+          <span class="service-launcher-card-action">Перейти к брифу <span aria-hidden="true">→</span></span>
+        </button>
+
+        <button class="service-launcher-card service-launcher-card-review" type="button" data-launch-view="review">
+          <span class="service-launcher-card-icon" aria-hidden="true">▶</span>
+          <span class="service-launcher-card-copy">
+            <span class="eyebrow">Видео уже готово</span>
+            <strong>Оставить правки</strong>
+            <span>Откройте видео, добавьте комментарии по таймкодам, отметьте кадры и выгрузите отчёт или проект для Premiere Pro.</span>
+          </span>
+          <span class="service-launcher-card-action">Перейти к правкам <span aria-hidden="true">→</span></span>
+        </button>
+      </div>
+
+      <p class="service-launcher-note">После выбора сервис запомнит последний раздел. Вернуться к этому экрану можно кнопкой «Сервисы» в верхней панели.</p>
+    </section>
+  </main>
 
   <main class="layout" id="reviewView" data-app-view-panel="review">
     <section class="workspace">
