@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#d71920" />
   <meta name="referrer" content="no-referrer" />
-  <title>Правочная — правки по видео</title>
+  <title>Правки по видео — Продакшн</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -43,6 +43,7 @@
           <button class="tab active" data-source-tab="local">С компьютера</button>
           <button class="tab" data-source-tab="url">По ссылке / Яндекс Диск</button>
         </div>
+
         <div class="source-panel active" data-source-panel="local">
           <label class="dropzone" id="dropzone" for="localVideoInput">
             <input id="localVideoInput" type="file" accept="video/*" hidden />
@@ -51,13 +52,14 @@
             <span>или перетащите файл сюда</span>
           </label>
         </div>
+
         <div class="source-panel" data-source-panel="url">
           <div class="url-row">
             <input id="videoUrl" type="url" placeholder="Прямая ссылка или публичная ссылка Яндекс Диска" />
             <button class="btn btn-primary" id="loadUrlBtn">Открыть</button>
           </div>
-          <p class="hint">Поддерживаются прямые ссылки с CORS и публичные ссылки Яндекс Диска на конкретный видеофайл.</p>
-          <p class="hint api-connected">Яндекс Диск подключается через Cloudflare Worker из <code>config.js</code>.</p>
+          <p class="hint">Можно вставить прямую ссылку на видео или публичную ссылку Яндекс Диска на конкретный файл. Закрытые ссылки и ссылки на папки не поддерживаются.</p>
+          <p class="hint api-connected">Яндекс Диск подключён автоматически — дополнительная настройка не требуется.</p>
         </div>
       </div>
 
@@ -67,10 +69,12 @@
           <canvas id="annotationCanvas" class="annotation-canvas" aria-label="Слой пометок поверх видео"></canvas>
           <div class="video-empty" id="videoEmpty">Видео не загружено</div>
         </div>
+
         <div class="timeline-block">
           <div class="markers" id="markers"></div>
-          <input id="timeline" type="range" min="0" max="100" step="0.001" value="0" aria-label="Таймлайн видео" />
+          <input id="timeline" type="range" min="0" max="100" step="0.01" value="0" aria-label="Таймлайн видео" />
         </div>
+
         <div class="controls">
           <div class="controls-left">
             <button class="icon-btn" id="backBtn" title="Назад на 5 секунд">−5</button>
@@ -84,11 +88,18 @@
             <button class="icon-btn" id="fullscreenBtn" title="На весь экран">⛶</button>
           </div>
         </div>
+
         <div class="annotation-toolbar">
           <div class="annotation-left">
             <button class="btn btn-ghost annotation-toggle" id="drawToggleBtn">✎ Рисовать</button>
-            <label class="mini-field color-field"><span>Цвет</span><input id="drawColor" type="color" value="#ff2d2d" /></label>
-            <label class="mini-field range-field"><span>Толщина</span><input id="drawSize" type="range" min="2" max="16" step="1" value="4" /></label>
+            <label class="mini-field color-field">
+              <span>Цвет</span>
+              <input id="drawColor" type="color" value="#ff2d2d" />
+            </label>
+            <label class="mini-field range-field">
+              <span>Толщина</span>
+              <input id="drawSize" type="range" min="2" max="16" step="1" value="4" />
+            </label>
             <button class="btn btn-ghost" id="undoDrawBtn">Отменить</button>
             <button class="btn btn-ghost" id="clearDrawBtn">Очистить</button>
           </div>
@@ -102,8 +113,9 @@
             <div class="eyebrow">Новая правка на таймкоде</div>
             <button id="currentTimeBtn" class="timecode-chip">00:00.000</button>
           </div>
-          <div class="keyboard-hint">M — начать правку · Ctrl/⌘ + Enter — сохранить · ←/→ — 1 сек.</div>
+          <div class="keyboard-hint">M — добавить правку · Пробел — пауза</div>
         </div>
+
         <div class="editor-grid">
           <div class="field">
             <label for="commentType">Тип</label>
@@ -122,28 +134,51 @@
           </div>
           <button class="btn btn-primary add-btn" id="addCommentBtn">Добавить правку</button>
         </div>
+
         <div class="editor-options">
-          <label class="inline-check"><input id="attachScreenshot" type="checkbox" checked /><span>Прикреплять текущий кадр</span></label>
-          <label class="inline-field"><span>Показывать оверлей</span><input id="commentDuration" type="number" min="0.04" step="0.1" value="2" /><span>сек.</span></label>
-          <p class="hint">Рисунок сохраняется отдельно от кадра: в Premiere он попадёт на прозрачный PNG-слой.</p>
+          <label class="inline-check">
+            <input id="attachScreenshot" type="checkbox" checked />
+            <span>Прикреплять скриншот текущего кадра к правке</span>
+          </label>
+          <p class="hint">Если поверх кадра есть пометки, они попадут на скриншот и будут доступны в карточке правки и при скачивании ZIP-отчёта.</p>
         </div>
       </div>
     </section>
 
     <aside class="sidebar card">
       <div class="sidebar-head">
-        <div><div class="eyebrow">Список правок</div><h2><span id="commentsCount">0</span> комментариев</h2></div>
+        <div>
+          <div class="eyebrow">Список правок</div>
+          <h2><span id="commentsCount">0</span> комментариев</h2>
+        </div>
         <button class="icon-btn" id="sortBtn" title="Сортировка по таймкоду">⇅</button>
       </div>
+
       <div class="filters">
         <select id="typeFilter" aria-label="Фильтр по типу">
-          <option value="all">Все типы</option><option value="Монтаж">Монтаж</option><option value="Графика">Графика</option><option value="Текст">Текст</option><option value="Звук">Звук</option><option value="Цвет">Цвет</option><option value="Другое">Другое</option>
+          <option value="all">Все типы</option>
+          <option value="Монтаж">Монтаж</option>
+          <option value="Графика">Графика</option>
+          <option value="Текст">Текст</option>
+          <option value="Звук">Звук</option>
+          <option value="Цвет">Цвет</option>
+          <option value="Другое">Другое</option>
         </select>
-        <select id="statusFilter" aria-label="Фильтр по статусу"><option value="all">Все статусы</option><option value="open">Открытые</option><option value="done">Выполненные</option></select>
+        <select id="statusFilter" aria-label="Фильтр по статусу">
+          <option value="all">Все статусы</option>
+          <option value="open">Открытые</option>
+          <option value="done">Выполненные</option>
+        </select>
       </div>
+
       <div class="comments" id="commentsList">
-        <div class="empty-state" id="emptyState"><div class="empty-icon">✎</div><strong>Правок пока нет</strong><span>Откройте видео, установите таймкод и добавьте комментарий.</span></div>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">✎</div>
+          <strong>Правок пока нет</strong>
+          <span>Откройте видео, установите таймкод и добавьте комментарий.</span>
+        </div>
       </div>
+
       <div class="sidebar-footer">
         <button class="btn btn-ghost full" id="copyTextBtn">Скопировать списком</button>
         <button class="btn btn-ghost full" id="exportCsvBtn">Скачать CSV</button>
@@ -155,45 +190,154 @@
 
   <dialog id="exportDialog">
     <form method="dialog" class="dialog-card">
-      <div class="dialog-head"><div><div class="eyebrow">Экспорт проекта</div><h3>Выберите формат</h3></div><button class="icon-btn" value="cancel" aria-label="Закрыть">×</button></div>
+      <div class="dialog-head">
+        <div>
+          <div class="eyebrow">Экспорт проекта</div>
+          <h3>Выберите формат</h3>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Закрыть">×</button>
+      </div>
       <div class="export-options">
-        <button type="button" class="export-option premiere-option" data-export="premiere"><span class="export-badge">Premiere Pro</span><strong>XML + маркеры + PNG-оверлеи</strong><span>Готовая секвенция с правками на нужных таймкодах</span></button>
-        <button type="button" class="export-option" data-export="zip"><strong>ZIP-отчёт со скриншотами</strong><span>CSV, TXT, JSON, HTML и отдельные кадры</span></button>
-        <button type="button" class="export-option" data-export="json"><strong>JSON-проект</strong><span>Резервная копия и продолжение работы</span></button>
-        <button type="button" class="export-option" data-export="csv"><strong>CSV-таблица</strong><span>Для Excel и Google Таблиц</span></button>
-        <button type="button" class="export-option" data-export="txt"><strong>Текстовый список</strong><span>Для отправки в чат или задачу</span></button>
+        <button type="button" class="export-option" data-export="zip">
+          <strong>ZIP-отчёт со скриншотами</strong>
+          <span>CSV, TXT, JSON и отдельные кадры с пометками</span>
+        </button>
+        <button type="button" class="export-option" data-export="json">
+          <strong>JSON-проект</strong>
+          <span>Для резервной копии и продолжения работы</span>
+        </button>
+        <button type="button" class="export-option" data-export="csv">
+          <strong>CSV-таблица</strong>
+          <span>Для Excel и Google Таблиц</span>
+        </button>
+        <button type="button" class="export-option" data-export="txt">
+          <strong>Текстовый список</strong>
+          <span>Для отправки в чат или задачу</span>
+        </button>
+        <button type="button" class="export-option premiere-export-option" data-export="premiere">
+          <strong>Adobe Premiere Pro</strong>
+          <span>XML с маркерами и прозрачными PNG на нужных таймкодах</span>
+        </button>
       </div>
     </form>
   </dialog>
 
   <dialog id="premiereDialog">
-    <form method="dialog" class="dialog-card premiere-dialog-card">
-      <div class="dialog-head"><div><div class="eyebrow">Adobe Premiere Pro</div><h3>Экспорт на таймлайн</h3></div><button class="icon-btn" value="cancel" aria-label="Закрыть">×</button></div>
-      <p class="dialog-description">Параметры должны совпадать с монтажной секвенцией. ZIP будет содержать Final Cut Pro 7 XML, sequence markers и прозрачные PNG.</p>
-      <div class="settings-grid">
-        <label class="field"><span>Частота кадров</span><select id="premiereFps"><option>23.976</option><option>24</option><option selected>25</option><option>29.97</option><option>30</option><option>50</option><option>59.94</option><option>60</option></select></label>
-        <label class="field"><span>Разрешение</span><select id="premiereResolution"><option value="1920x1080" selected>1920 × 1080</option><option value="3840x2160">3840 × 2160</option><option value="1080x1920">1080 × 1920</option><option value="1080x1350">1080 × 1350</option><option value="custom">Другое</option></select></label>
-        <label class="field custom-size hidden" id="premiereWidthField"><span>Ширина</span><input id="premiereWidth" type="number" min="320" value="1920" /></label>
-        <label class="field custom-size hidden" id="premiereHeightField"><span>Высота</span><input id="premiereHeight" type="number" min="180" value="1080" /></label>
-        <label class="field"><span>Стартовый таймкод</span><input id="premiereStartTimecode" type="text" value="00:00:00:00" placeholder="HH:MM:SS:FF" /></label>
-        <label class="field"><span>Длительность по умолчанию, сек.</span><input id="premiereOverlayDuration" type="number" min="0.04" step="0.1" value="2" /></label>
-        <label class="field"><span>Стиль PNG</span><select id="premiereOverlayStyle"><option value="card-thumbnail" selected>Карточка + кадр</option><option value="card-only">Только карточка</option><option value="full-reference">Референсный кадр</option></select></label>
-        <label class="field"><span>Кадр в карточке</span><select id="premiereThumbnailPosition"><option value="right" selected>Справа</option><option value="left">Слева</option></select></label>
+    <div class="dialog-card premiere-dialog-card">
+      <div class="dialog-head">
+        <div>
+          <div class="eyebrow">Экспорт проекта</div>
+          <h3>Adobe Premiere Pro</h3>
+        </div>
+        <button class="icon-btn" id="closePremiereDialogBtn" type="button" aria-label="Закрыть">×</button>
       </div>
-      <div class="premiere-summary"><span>Правок: <strong id="premiereCommentsCount">0</strong></span><span>PNG-дорожки будут созданы автоматически</span></div>
-      <div class="dialog-actions"><button type="button" class="btn btn-ghost" id="premiereCancelBtn">Отмена</button><button type="button" class="btn btn-primary" id="premiereExportBtn">Скачать ZIP для Premiere</button></div>
-      <div class="export-progress hidden" id="premiereProgress"><div class="progress-track"><div class="progress-bar" id="premiereProgressBar"></div></div><span id="premiereProgressText">Подготовка…</span></div>
-    </form>
+
+      <p class="premiere-intro">Будет создан ZIP с Final Cut Pro 7 XML, sequence markers и прозрачными PNG-карточками правок.</p>
+
+      <div class="premiere-settings-grid">
+        <label class="field">
+          <span>Частота кадров</span>
+          <select id="premiereFps">
+            <option value="23.976">23.976 fps</option>
+            <option value="24">24 fps</option>
+            <option value="25" selected>25 fps</option>
+            <option value="29.97">29.97 fps</option>
+            <option value="30">30 fps</option>
+            <option value="50">50 fps</option>
+            <option value="59.94">59.94 fps</option>
+            <option value="60">60 fps</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Разрешение секвенции</span>
+          <select id="premiereResolution">
+            <option value="1920x1080" selected>1920 × 1080</option>
+            <option value="3840x2160">3840 × 2160</option>
+            <option value="1080x1920">1080 × 1920</option>
+            <option value="1080x1350">1080 × 1350</option>
+            <option value="custom">Другое</option>
+          </select>
+        </label>
+
+        <label class="field premiere-custom-size hidden" id="premiereWidthField">
+          <span>Ширина</span>
+          <input id="premiereWidth" type="number" min="320" max="8192" step="1" value="1920" />
+        </label>
+
+        <label class="field premiere-custom-size hidden" id="premiereHeightField">
+          <span>Высота</span>
+          <input id="premiereHeight" type="number" min="180" max="8192" step="1" value="1080" />
+        </label>
+
+        <label class="field">
+          <span>Стартовый таймкод</span>
+          <input id="premiereStartTimecode" type="text" value="00:00:00:00" placeholder="00:00:00:00" />
+        </label>
+
+        <label class="field">
+          <span>Показывать карточку</span>
+          <select id="premiereOverlayDuration">
+            <option value="1">1 секунду</option>
+            <option value="2" selected>2 секунды</option>
+            <option value="3">3 секунды</option>
+            <option value="5">5 секунд</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Содержимое XML</span>
+          <select id="premiereExportMode">
+            <option value="markers-overlays" selected>Маркеры + PNG-оверлеи</option>
+            <option value="markers-only">Только маркеры</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Вид PNG-оверлея</span>
+          <select id="premiereOverlayStyle">
+            <option value="card-thumbnail" selected>Карточка + скриншот</option>
+            <option value="card-only">Только карточка</option>
+            <option value="full-reference">Референсный кадр + карточка</option>
+          </select>
+        </label>
+      </div>
+
+      <p class="hint premiere-hint">FPS, разрешение и стартовый таймкод должны совпадать с секвенцией монтажёра. Для 29.97 и 59.94 используется NDF.</p>
+
+      <div class="premiere-progress hidden" id="premiereProgress" aria-live="polite">
+        <div class="premiere-progress-track"><span id="premiereProgressBar"></span></div>
+        <span id="premiereProgressText">Подготовка…</span>
+      </div>
+
+      <div class="premiere-dialog-actions">
+        <button class="btn btn-ghost" id="cancelPremiereExportBtn" type="button">Отмена</button>
+        <button class="btn btn-primary" id="createPremiereExportBtn" type="button">Скачать ZIP для Premiere</button>
+      </div>
+    </div>
   </dialog>
 
   <dialog id="imagePreviewDialog">
     <div class="image-preview-card">
-      <div class="dialog-head image-preview-head"><div><div class="eyebrow">Скриншот правки</div><h3 id="imagePreviewTitle">Кадр</h3></div><div class="image-preview-actions"><button class="btn btn-ghost" id="downloadPreviewImageBtn" type="button">Скачать</button><button class="icon-btn" id="closePreviewBtn" type="button" aria-label="Закрыть">×</button></div></div>
-      <div class="image-preview-wrap"><img id="imagePreview" alt="Скриншот правки" /></div>
+      <div class="dialog-head image-preview-head">
+        <div>
+          <div class="eyebrow">Скриншот правки</div>
+          <h3 id="imagePreviewTitle">Кадр</h3>
+        </div>
+        <div class="image-preview-actions">
+          <button class="btn btn-ghost" id="downloadPreviewImageBtn" type="button">Скачать</button>
+          <button class="icon-btn" id="closePreviewBtn" type="button" aria-label="Закрыть">×</button>
+        </div>
+      </div>
+      <div class="image-preview-wrap">
+        <img id="imagePreview" alt="Скриншот правки" />
+      </div>
     </div>
   </dialog>
 
   <script src="config.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="vendor/jszip.min.js"></script>
+  <script src="app.js"></script>
+  <script type="module" src="premiere-export.js"></script>
 </body>
 </html>
