@@ -46,6 +46,8 @@ test('original interface and Premiere additions coexist', async () => {
   assert.match(html, /data-export="premiere"/);
   assert.match(html, /src="app\.js"/);
   assert.match(html, /src="premiere-export\.js"/);
+  assert.match(html, /id="briefView"/);
+  assert.match(html, /src="brief-ui\.js"/);
   assert.match(app, /window\.PRAVOCHNAYA_API/);
 });
 
@@ -54,9 +56,10 @@ test('all JavaScript id lookups exist and HTML ids are unique', async () => {
   const html = await readFile(new URL('../docs/index.html', import.meta.url), 'utf8');
   const app = await readFile(new URL('../docs/app.js', import.meta.url), 'utf8');
   const premiere = await readFile(new URL('../docs/premiere-export.js', import.meta.url), 'utf8');
+  const brief = await readFile(new URL('../docs/brief-ui.js', import.meta.url), 'utf8');
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   assert.equal(new Set(ids).size, ids.length, 'HTML contains duplicate ids');
-  const required = [...`${app}\n${premiere}`.matchAll(/\$\('#([A-Za-z0-9_-]+)'\)/g)].map((match) => match[1]);
+  const required = [...`${app}\n${premiere}\n${brief}`.matchAll(/\$\('#([A-Za-z0-9_-]+)'\)/g)].map((match) => match[1]);
   const missing = [...new Set(required)].filter((id) => !ids.includes(id));
   assert.deepEqual(missing, []);
 });

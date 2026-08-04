@@ -13,11 +13,15 @@
     <div class="brand">
       <div class="brand-mark">Э</div>
       <div>
-        <div class="brand-title">Видео · Правки</div>
-        <div class="brand-subtitle">внутренний сервис продакшена</div>
+        <div class="brand-title" id="brandTitle">Видео · Правки</div>
+        <div class="brand-subtitle" id="brandSubtitle">внутренний сервис продакшена</div>
       </div>
     </div>
-    <div class="top-actions">
+    <nav class="service-switch" role="tablist" aria-label="Раздел сервиса">
+      <button class="service-switch-btn active" type="button" role="tab" aria-selected="true" data-app-view="review">Правки</button>
+      <button class="service-switch-btn" type="button" role="tab" aria-selected="false" data-app-view="brief">Бриф</button>
+    </nav>
+    <div class="top-actions" id="reviewTopActions">
       <button class="btn btn-ghost" id="newProjectBtn">Новый проект</button>
       <button class="btn btn-ghost" id="importBtn">Импорт JSON</button>
       <button class="btn btn-primary" id="exportBtn">Экспорт</button>
@@ -25,7 +29,7 @@
     </div>
   </header>
 
-  <main class="layout">
+  <main class="layout" id="reviewView" data-app-view-panel="review">
     <section class="workspace">
       <div class="project-header card">
         <div class="field grow">
@@ -186,6 +190,56 @@
     </aside>
   </main>
 
+  <main class="brief-shell hidden" id="briefView" data-app-view-panel="brief">
+    <section class="brief-main">
+      <div class="brief-hero card">
+        <div class="brief-hero-copy">
+          <div class="eyebrow">Заявка в продакшн</div>
+          <h1>Бриф на видеопроизводство</h1>
+          <p>Ответьте на вопросы — справа автоматически соберётся готовый текст, который можно скопировать и отправить команде продакшена.</p>
+        </div>
+        <div class="brief-progress-card">
+          <div class="brief-progress-label">
+            <span>Заполнено</span>
+            <strong id="briefProgressValue">0 из 16</strong>
+          </div>
+          <div class="brief-progress-track"><span id="briefProgressBar"></span></div>
+          <span class="brief-save-status" id="briefSaveStatus">Сохранено в браузере</span>
+        </div>
+      </div>
+
+      <form class="brief-form" id="briefForm" novalidate>
+        <section class="brief-project-card card">
+          <div class="brief-question-heading">
+            <span class="brief-question-number">00</span>
+            <div>
+              <label class="brief-question-title" for="briefProjectTitle">Название проекта / задачи</label>
+              <p class="brief-question-help">Необязательное служебное поле — поможет отличить бриф в переписке.</p>
+            </div>
+          </div>
+          <input id="briefProjectTitle" type="text" placeholder="Например: Имиджевый ролик о новом продукте" />
+        </section>
+        <div class="brief-fields" id="briefFields"></div>
+      </form>
+    </section>
+
+    <aside class="brief-result card">
+      <div class="brief-result-head">
+        <div>
+          <div class="eyebrow">Готовое сообщение</div>
+          <h2>Текст брифа</h2>
+        </div>
+        <span class="brief-live-badge">обновляется автоматически</span>
+      </div>
+      <textarea id="briefOutput" class="brief-output" readonly aria-label="Сформированный текст брифа"></textarea>
+      <div class="brief-result-actions">
+        <button class="btn btn-primary full" id="copyBriefBtn" type="button">Скопировать бриф</button>
+        <button class="btn btn-ghost full" id="downloadBriefBtn" type="button">Скачать TXT</button>
+        <button class="brief-clear-btn" id="clearBriefBtn" type="button">Очистить ответы</button>
+      </div>
+    </aside>
+  </main>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <dialog id="exportDialog">
@@ -339,5 +393,6 @@
   <script src="vendor/jszip.min.js"></script>
   <script src="app.js"></script>
   <script type="module" src="premiere-export.js"></script>
+  <script type="module" src="brief-ui.js"></script>
 </body>
 </html>

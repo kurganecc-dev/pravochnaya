@@ -1,10 +1,10 @@
 {
-  "name": "pravochnaya-with-premiere",
-  "version": "1.1.0",
+  "name": "pravochnaya-production-service",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "check": "node --check docs/app.js && node --check docs/premiere-export.js && node --check docs/lib/premiere.js && node --check docs/lib/overlay.js"
+    "check": "node --check docs/app.js && node --check docs/premiere-export.js && node --check docs/brief-ui.js && node --check docs/lib/premiere.js && node --check docs/lib/overlay.js && node --check docs/lib/brief.js"
   }
 }
