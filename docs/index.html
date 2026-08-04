@@ -235,41 +235,64 @@
         <div class="brief-hero-copy">
           <div class="eyebrow">Заявка в продакшн</div>
           <h1>Бриф на видеопроизводство</h1>
-          <p>Ответьте на вопросы — справа автоматически соберётся готовый текст, который можно скопировать и отправить команде продакшена.</p>
+          <p>Шесть коротких этапов помогут собрать задачу так, чтобы продакшен мог оценить сроки, состав работ и бюджет без длинной переписки.</p>
         </div>
         <div class="brief-progress-card">
           <div class="brief-progress-label">
-            <span>Заполнено</span>
-            <strong id="briefProgressValue">0 из 16</strong>
+            <span>Готовность к оценке</span>
+            <strong id="briefProgressValue">0%</strong>
           </div>
           <div class="brief-progress-track"><span id="briefProgressBar"></span></div>
+          <span class="brief-progress-meta" id="briefProgressMeta">Заполнено 0 обязательных пунктов</span>
           <span class="brief-save-status" id="briefSaveStatus">Сохранено в браузере</span>
         </div>
       </div>
 
+      <nav class="brief-stepper card" id="briefStepper" aria-label="Этапы заполнения брифа"></nav>
+
       <form class="brief-form" id="briefForm" novalidate>
-        <section class="brief-project-card card">
-          <div class="brief-question-heading">
-            <span class="brief-question-number">00</span>
+        <section class="brief-stage card">
+          <header class="brief-stage-head">
             <div>
-              <label class="brief-question-title" for="briefProjectTitle">Название проекта / задачи</label>
-              <p class="brief-question-help">Необязательное служебное поле — поможет отличить бриф в переписке.</p>
+              <div class="eyebrow" id="briefStepEyebrow">Этап 1 из 6</div>
+              <h2 id="briefStepTitle">Проект и согласование</h2>
+              <p id="briefStepDescription"></p>
             </div>
-          </div>
-          <input id="briefProjectTitle" type="text" placeholder="Например: Имиджевый ролик о новом продукте" />
+            <span class="brief-step-counter" id="briefStepCounter">1 / 6</span>
+          </header>
+
+          <div class="brief-fields" id="briefFields"></div>
+
+          <footer class="brief-stage-actions">
+            <button class="btn btn-ghost" id="briefPrevBtn" type="button">← Назад</button>
+            <button class="btn btn-primary" id="briefNextBtn" type="button">Следующий этап →</button>
+          </footer>
         </section>
-        <div class="brief-fields" id="briefFields"></div>
       </form>
     </section>
 
     <aside class="brief-result card">
       <div class="brief-result-head">
         <div>
-          <div class="eyebrow">Готовое сообщение</div>
-          <h2>Текст брифа</h2>
+          <div class="eyebrow">Результат</div>
+          <h2>Готовый бриф</h2>
         </div>
         <span class="brief-live-badge">обновляется автоматически</span>
       </div>
+
+      <section class="brief-readiness" id="briefReadinessCard" aria-live="polite">
+        <span class="brief-readiness-icon" id="briefReadinessIcon" aria-hidden="true">!</span>
+        <div>
+          <strong id="briefReadinessTitle">Нужно заполнить обязательные пункты</strong>
+          <p id="briefReadinessText">Сервис покажет, чего не хватает для предварительной оценки.</p>
+        </div>
+      </section>
+
+      <div class="brief-missing-wrap" id="briefMissingWrap">
+        <div class="brief-missing-title">Нужно уточнить</div>
+        <div class="brief-missing-list" id="briefMissingList"></div>
+      </div>
+
       <textarea id="briefOutput" class="brief-output" readonly aria-label="Сформированный текст брифа"></textarea>
       <div class="brief-result-actions">
         <button class="btn btn-primary full" id="copyBriefBtn" type="button">Скопировать бриф</button>
