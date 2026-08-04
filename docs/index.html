@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#d71920" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Правки по видео — Продакшн</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">Э</div>
+      <div>
+        <div class="brand-title">Видео · Правки</div>
+        <div class="brand-subtitle">внутренний сервис продакшена</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-ghost" id="newProjectBtn">Новый проект</button>
+      <button class="btn btn-ghost" id="importBtn">Импорт JSON</button>
+      <button class="btn btn-primary" id="exportBtn">Экспорт</button>
+      <input id="importInput" type="file" accept="application/json" hidden />
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="workspace">
+      <div class="project-header card">
+        <div class="field grow">
+          <label for="projectName">Название проекта</label>
+          <input id="projectName" type="text" placeholder="Например: Ролик ЖК «Северный»" />
+        </div>
+        <div class="field author-field">
+          <label for="authorName">Автор правок</label>
+          <input id="authorName" type="text" placeholder="Имя" />
+        </div>
+      </div>
+
+      <div class="source-card card" id="sourceCard">
+        <div class="source-tabs" role="tablist" aria-label="Источник видео">
+          <button class="tab active" data-source-tab="local">С компьютера</button>
+          <button class="tab" data-source-tab="url">По ссылке / Яндекс Диск</button>
+        </div>
+
+        <div class="source-panel active" data-source-panel="local">
+          <label class="dropzone" id="dropzone" for="localVideoInput">
+            <input id="localVideoInput" type="file" accept="video/*" hidden />
+            <span class="drop-icon">＋</span>
+            <strong>Выберите видео</strong>
+            <span>или перетащите файл сюда</span>
+          </label>
+        </div>
+
+        <div class="source-panel" data-source-panel="url">
+          <div class="url-row">
+            <input id="videoUrl" type="url" placeholder="Прямая ссылка или публичная ссылка Яндекс Диска" />
+            <button class="btn btn-primary" id="loadUrlBtn">Открыть</button>
+          </div>
+          <p class="hint">Можно вставить прямую ссылку на видео или публичную ссылку Яндекс Диска на конкретный файл. Закрытые ссылки и ссылки на папки не поддерживаются.</p>
+          <p class="hint api-connected">Яндекс Диск подключён автоматически — дополнительная настройка не требуется.</p>
+        </div>
+      </div>
+
+      <div class="player-card card hidden" id="playerCard">
+        <div class="video-wrap" id="videoWrap">
+          <video id="video" playsinline preload="metadata" referrerpolicy="no-referrer"></video>
+          <canvas id="annotationCanvas" class="annotation-canvas" aria-label="Слой пометок поверх видео"></canvas>
+          <div class="video-empty" id="videoEmpty">Видео не загружено</div>
+        </div>
+
+        <div class="timeline-block">
+          <div class="markers" id="markers"></div>
+          <input id="timeline" type="range" min="0" max="100" step="0.01" value="0" aria-label="Таймлайн видео" />
+        </div>
+
+        <div class="controls">
+          <div class="controls-left">
+            <button class="icon-btn" id="backBtn" title="Назад на 5 секунд">−5</button>
+            <button class="play-btn" id="playBtn" title="Пуск/пауза">▶</button>
+            <button class="icon-btn" id="forwardBtn" title="Вперёд на 5 секунд">+5</button>
+            <span class="time" id="timeLabel">00:00 / 00:00</span>
+          </div>
+          <div class="controls-right">
+            <button class="icon-btn" id="muteBtn" title="Звук">🔊</button>
+            <input id="volume" class="volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="Громкость" />
+            <button class="icon-btn" id="fullscreenBtn" title="На весь экран">⛶</button>
+          </div>
+        </div>
+
+        <div class="annotation-toolbar">
+          <div class="annotation-left">
+            <button class="btn btn-ghost annotation-toggle" id="drawToggleBtn">✎ Рисовать</button>
+            <label class="mini-field color-field">
+              <span>Цвет</span>
+              <input id="drawColor" type="color" value="#ff2d2d" />
+            </label>
+            <label class="mini-field range-field">
+              <span>Толщина</span>
+              <input id="drawSize" type="range" min="2" max="16" step="1" value="4" />
+            </label>
+            <button class="btn btn-ghost" id="undoDrawBtn">Отменить</button>
+            <button class="btn btn-ghost" id="clearDrawBtn">Очистить</button>
+          </div>
+          <div class="annotation-note" id="annotationStatus">Рисование выключено</div>
+        </div>
+      </div>
+
+      <div class="editor-card card hidden" id="editorCard">
+        <div class="editor-topline">
+          <div>
+            <div class="eyebrow">Новая правка на таймкоде</div>
+            <button id="currentTimeBtn" class="timecode-chip">00:00.000</button>
+          </div>
+          <div class="keyboard-hint">M — добавить правку · Пробел — пауза</div>
+        </div>
+
+        <div class="editor-grid">
+          <div class="field">
+            <label for="commentType">Тип</label>
+            <select id="commentType">
+              <option value="Монтаж">Монтаж</option>
+              <option value="Графика">Графика</option>
+              <option value="Текст">Текст</option>
+              <option value="Звук">Звук</option>
+              <option value="Цвет">Цвет</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+          <div class="field grow">
+            <label for="commentText">Комментарий</label>
+            <textarea id="commentText" rows="3" placeholder="Что нужно изменить в этом месте?"></textarea>
+          </div>
+          <button class="btn btn-primary add-btn" id="addCommentBtn">Добавить правку</button>
+        </div>
+
+        <div class="editor-options">
+          <label class="inline-check">
+            <input id="attachScreenshot" type="checkbox" checked />
+            <span>Прикреплять скриншот текущего кадра к правке</span>
+          </label>
+          <p class="hint">Если поверх кадра есть пометки, они попадут на скриншот и будут доступны в карточке правки и при скачивании ZIP-отчёта.</p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar card">
+      <div class="sidebar-head">
+        <div>
+          <div class="eyebrow">Список правок</div>
+          <h2><span id="commentsCount">0</span> комментариев</h2>
+        </div>
+        <button class="icon-btn" id="sortBtn" title="Сортировка по таймкоду">⇅</button>
+      </div>
+
+      <div class="filters">
+        <select id="typeFilter" aria-label="Фильтр по типу">
+          <option value="all">Все типы</option>
+          <option value="Монтаж">Монтаж</option>
+          <option value="Графика">Графика</option>
+          <option value="Текст">Текст</option>
+          <option value="Звук">Звук</option>
+          <option value="Цвет">Цвет</option>
+          <option value="Другое">Другое</option>
+        </select>
+        <select id="statusFilter" aria-label="Фильтр по статусу">
+          <option value="all">Все статусы</option>
+          <option value="open">Открытые</option>
+          <option value="done">Выполненные</option>
+        </select>
+      </div>
+
+      <div class="comments" id="commentsList">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">✎</div>
+          <strong>Правок пока нет</strong>
+          <span>Откройте видео, установите таймкод и добавьте комментарий.</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost full" id="copyTextBtn">Скопировать списком</button>
+        <button class="btn btn-ghost full" id="exportCsvBtn">Скачать CSV</button>
+      </div>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="exportDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div>
+          <div class="eyebrow">Экспорт проекта</div>
+          <h3>Выберите формат</h3>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Закрыть">×</button>
+      </div>
+      <div class="export-options">
+        <button type="button" class="export-option" data-export="zip">
+          <strong>ZIP-отчёт со скриншотами</strong>
+          <span>CSV, TXT, JSON и отдельные кадры с пометками</span>
+        </button>
+        <button type="button" class="export-option" data-export="json">
+          <strong>JSON-проект</strong>
+          <span>Для резервной копии и продолжения работы</span>
+        </button>
+        <button type="button" class="export-option" data-export="csv">
+          <strong>CSV-таблица</strong>
+          <span>Для Excel и Google Таблиц</span>
+        </button>
+        <button type="button" class="export-option" data-export="txt">
+          <strong>Текстовый список</strong>
+          <span>Для отправки в чат или задачу</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="imagePreviewDialog">
+    <div class="image-preview-card">
+      <div class="dialog-head image-preview-head">
+        <div>
+          <div class="eyebrow">Скриншот правки</div>
+          <h3 id="imagePreviewTitle">Кадр</h3>
+        </div>
+        <div class="image-preview-actions">
+          <button class="btn btn-ghost" id="downloadPreviewImageBtn" type="button">Скачать</button>
+          <button class="icon-btn" id="closePreviewBtn" type="button" aria-label="Закрыть">×</button>
+        </div>
+      </div>
+      <div class="image-preview-wrap">
+        <img id="imagePreview" alt="Скриншот правки" />
+      </div>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="vendor/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
