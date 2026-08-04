@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "projectName": "Демо — ролик ЖК Северный",
+  "authorName": "Анна",
+  "savedAt": "2026-08-04T16:30:00.000Z",
+  "comments": [
+    {
+      "id": "demo-1",
+      "time": 4.48,
+      "type": "Монтаж",
+      "text": "Укоротить вступительную паузу примерно на полсекунды.",
+      "author": "Анна",
+      "status": "open",
+      "screenshotDataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgwIiBoZWlnaHQ9IjcyMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzE0MjEzZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzRmNWQ3NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMjgwIiBoZWlnaHQ9IjcyMCIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjcwIiB5PSI4MCIgd2lkdGg9IjExNDAiIGhlaWdodD0iNTYwIiByeD0iMjQiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9Ii4wOCIvPjxjaXJjbGUgY3g9IjkxMCIgY3k9IjI5MCIgcj0iMTAwIiBmaWxsPSIjZDcxOTIwIiBvcGFjaXR5PSIuNzIiLz48dGV4dCB4PSI5MCIgeT0iMTUwIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSI0NCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iNzAwIj7QlNC10LzQvi3QutCw0LTRgCDQuNC3INCf0YDQsNCy0L7Rh9C90L7QuTwvdGV4dD48dGV4dCB4PSI5MCIgeT0iNjAwIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjciIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCI+0JfQtNC10YHRjCDQsdGD0LTQtdGCINGB0LrRgNC40L3RiNC+0YIg0YDQtdCw0LvRjNC90L7Qs9C+INC80L7QvdGC0LDQttCwPC90ZXh0Pjwvc3ZnPg==",
+      "screenshotMime": "image/svg+xml"
+    },
+    {
+      "id": "demo-2",
+      "time": 12.96,
+      "type": "Графика",
+      "text": "Заменить логотип на актуальную версию и увеличить отступ справа.",
+      "author": "Анна",
+      "status": "open",
+      "screenshotDataUrl": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgwIiBoZWlnaHQ9IjcyMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzE0MjEzZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzRmNWQ3NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMjgwIiBoZWlnaHQ9IjcyMCIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjcwIiB5PSI4MCIgd2lkdGg9IjExNDAiIGhlaWdodD0iNTYwIiByeD0iMjQiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9Ii4wOCIvPjxjaXJjbGUgY3g9IjkxMCIgY3k9IjI5MCIgcj0iMTAwIiBmaWxsPSIjZDcxOTIwIiBvcGFjaXR5PSIuNzIiLz48dGV4dCB4PSI5MCIgeT0iMTUwIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSI0NCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iNzAwIj7QlNC10LzQvi3QutCw0LTRgCDQuNC3INCf0YDQsNCy0L7Rh9C90L7QuTwvdGV4dD48dGV4dCB4PSI5MCIgeT0iNjAwIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjciIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCI+0JfQtNC10YHRjCDQsdGD0LTQtdGCINGB0LrRgNC40L3RiNC+0YIg0YDQtdCw0LvRjNC90L7Qs9C+INC80L7QvdGC0LDQttCwPC90ZXh0Pjwvc3ZnPg==",
+      "annotations": [
+        {
+          "color": "#ff2d2d",
+          "size": 7,
+          "points": [
+            {
+              "x": 0.67,
+              "y": 0.29
+            },
+            {
+              "x": 0.72,
+              "y": 0.37
+            },
+            {
+              "x": 0.78,
+              "y": 0.32
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "demo-3",
+      "time": 21.2,
+      "durationSeconds": 3.5,
+      "type": "Звук",
+      "text": "Уменьшить громкость музыки на этом фрагменте, чтобы голос звучал разборчивее.",
+      "author": "Анна",
+      "status": "done",
+      "screenshotDataUrl": null
+    }
+  ]
+}

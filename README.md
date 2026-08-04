@@ -1,118 +1,119 @@
-# Видео · Правки — GitHub Pages
+# Правочная → Adobe Premiere Pro
 
-Версия сервиса, адаптированная для GitHub Pages.
+Статический GitHub Pages-конвертер, который принимает JSON-проект из сервиса **«Правочная»** и создаёт ZIP для Adobe Premiere Pro:
 
-## Что изменено
+- Final Cut Pro 7 XML (`xmeml v5`);
+- sequence markers с полным текстом правок;
+- прозрачные PNG-оверлеи на нужных таймкодах;
+- отдельные верхние дорожки для пересекающихся правок;
+- CSV/JSON-манифест;
+- инструкция монтажёру;
+- резервная копия исходного JSON.
 
-- ZIP-отчёт собирается прямо в браузере через локально подключённый JSZip;
-- Python-сервер для экспорта больше не нужен;
-- Яндекс Диск работает через отдельный Cloudflare Worker;
-- Worker поддерживает CORS и Range-запросы, поэтому видео можно перематывать и сохранять кадры с пометками;
-- адрес корпоративного Worker уже зашит в сайт;
-- добавлены GitHub Actions для публикации Pages и Worker.
+Все изображения обрабатываются локально в браузере и никуда не отправляются.
 
-## Структура
+## Как работает
 
-```text
-docs/                     статический сайт GitHub Pages
-worker/                   Cloudflare Worker для Яндекс Диска
-.github/workflows/        автоматическая публикация
-```
+1. Экспортируйте JSON из основной «Правочной».
+2. Откройте этот конвертер и загрузите JSON.
+3. Укажите FPS, разрешение и стартовый таймкод монтажной секвенции.
+4. Выберите стиль PNG-оверлея.
+5. Скачайте ZIP.
+6. Полностью распакуйте ZIP.
+7. В Premiere Pro выберите **Файл → Импорт** и откройте `pravochnaya-premiere.xml`.
+8. Перетащите импортированную секвенцию на верхнюю видеодорожку монтажа, начиная ровно со старта секвенции.
 
-## Шаг 1. Загрузите проект в GitHub
+Если Premiere показывает PNG как Offline, выполните **Link Media / Связать медиа** и укажите первый файл в папке `overlays`. Остальные файлы обычно находятся автоматически.
 
-Создайте репозиторий и загрузите в него содержимое этой папки:
+## Поддерживаемый JSON
 
-```bash
-git init
-git add .
-git commit -m "Video review service"
-git branch -M main
-git remote add origin https://github.com/USERNAME/REPOSITORY.git
-git push -u origin main
-```
-
-## Шаг 2. Cloudflare Worker уже подключён
-
-Корпоративный Worker уже развёрнут и указан в `docs/config.js`:
-
-```js
-window.VIDEO_REVIEW_CONFIG = {
-  apiBaseUrl: 'https://video-review-yandex-api.kurganecc.workers.dev',
-};
-```
-
-Этот шаг пользователю выполнять не нужно. Папка `worker` сохранена только для резервного развёртывания или будущих изменений.
-
-### Необязательное повторное развёртывание Worker
-
-```bash
-cd worker
-npm install
-npx wrangler login
-npm run deploy
-```
-
-После смены Worker замените адрес в `docs/config.js`.
-
-## Шаг 3. Включите GitHub Pages
-
-Откройте:
-
-```text
-Settings → Pages → Build and deployment
-```
-
-Выберите источник:
-
-```text
-GitHub Actions
-```
-
-Workflow `pages.yml` опубликует папку `docs`.
-
-## Ограничение доступа
-
-По умолчанию Worker разрешает запросы с любых сайтов:
+Конвертер напрямую понимает текущую структуру проекта «Правочной»:
 
 ```json
-"ALLOWED_ORIGINS": "*"
+{
+  "projectName": "Ролик ЖК Северный",
+  "authorName": "Анна",
+  "comments": [
+    {
+      "id": "comment-1",
+      "time": 12.48,
+      "type": "Графика",
+      "text": "Заменить логотип",
+      "author": "Анна",
+      "status": "open",
+      "screenshotDataUrl": "data:image/jpeg;base64,..."
+    }
+  ]
+}
 ```
 
-После проверки лучше заменить значение в `worker/wrangler.jsonc` на адрес вашего GitHub Pages:
+Дополнительно поддерживаются:
 
-```json
-"ALLOWED_ORIGINS": "https://USERNAME.github.io"
-```
+- `durationSeconds` — длительность конкретной карточки;
+- `annotations` — нормализованные штрихи для прозрачного слоя;
+- `enabled: false` — исключение правки из экспорта.
 
-Для нескольких доменов используйте строку через запятую.
+## GitHub Pages
 
-## Работает на GitHub Pages
+### Автоматическая публикация
 
-- загрузка локального видео;
-- прямые ссылки на видео с корректным CORS;
-- публичные видео Яндекс Диска через Worker;
-- таймкоды и комментарии;
-- статусы, сортировка и фильтры;
-- рисование поверх кадра;
-- скриншоты с пометками;
-- скачивание отдельных кадров;
-- экспорт JSON, CSV и TXT;
-- ZIP с `project.json`, `comments.csv`, `comments.txt`, `report.html` и папкой `screenshots`;
-- автосохранение в браузере.
+1. Создайте новый репозиторий.
+2. Загрузите в него содержимое этого архива.
+3. Откройте **Settings → Pages**.
+4. В разделе **Build and deployment** выберите **GitHub Actions**.
+5. Сделайте push в ветку `main`.
 
-## Локальная проверка
+Workflow `.github/workflows/pages.yml` сначала запускает тесты, затем публикует папку `docs`.
 
-Сайт:
+### Локальный запуск
 
 ```bash
 python3 -m http.server 8080 --directory docs
 ```
 
-Worker:
+Откройте `http://localhost:8080`.
+
+## Тесты
 
 ```bash
-cd worker
-npm install
-npm run dev
+npm test
+npm run verify
 ```
+
+`npm run verify` создаёт тестовый `verify-output.zip`. Его можно проверить системной командой:
+
+```bash
+unzip -t verify-output.zip
+```
+
+## Структура
+
+```text
+docs/
+  index.html                 интерфейс GitHub Pages
+  styles.css                 стили
+  app.js                     загрузка JSON и экспорт
+  lib/premiere.js            таймкоды и Final Cut Pro 7 XML
+  lib/overlay.js             рендер прозрачных PNG
+  lib/zip.js                 локальная сборка ZIP без зависимостей
+  sample/                    демонстрационный проект
+.github/workflows/pages.yml  тесты и публикация Pages
+tests/                       unit-тесты
+scripts/verify.mjs           smoke-тест экспортного архива
+```
+
+## Важные ограничения
+
+- XML создаёт отдельную секвенцию с PNG-оверлеями. Он не изменяет автоматически уже открытую секвенцию монтажёра.
+- FPS, разрешение и стартовый таймкод должны совпадать с монтажом.
+- Для `29.97` и `59.94` используется NDF-таймкод. Drop-frame пока не реализован.
+- Путь к PNG в XML является служебным. После импорта может потребоваться один раз указать папку `overlays` через Link Media.
+- Реальная совместимость может немного различаться между версиями Premiere Pro, поэтому сначала проверьте экспорт на копии проекта.
+
+Adobe подтверждает импорт XML-проектов Final Cut Pro 7 в Premiere Pro и сохранение sequence markers, настроек секвенции, раскладки дорожек и стартового таймкода:
+
+- https://helpx.adobe.com/premiere-pro/using/importing-xml-project-files-final.html
+
+## Лицензия
+
+MIT.
