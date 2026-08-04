@@ -1,15 +1,10 @@
 {
-  "name": "pravochnaya-premiere-exporter",
-  "version": "1.0.0",
+  "name": "pravochnaya-video-review",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "GitHub Pages converter from Pravochnaya JSON to Adobe Premiere Pro FCP7 XML with PNG overlays and markers.",
-  "scripts": {
-    "test": "node --test",
-    "verify": "node scripts/verify.mjs"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "license": "MIT"
+  "description": "Unified GitHub Pages video review service with Adobe Premiere Pro XML, markers and PNG overlay export.",
+  "scripts": {"test":"node --test","verify":"node scripts/verify.mjs"},
+  "engines":{"node":">=20"},
+  "license":"MIT"
 }

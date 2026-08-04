@@ -63,6 +63,7 @@ export function normalizeProject(raw) {
       status: String(comment.status || 'open'),
       createdAt: comment.createdAt || null,
       screenshotDataUrl: typeof comment.screenshotDataUrl === 'string' ? comment.screenshotDataUrl : null,
+      sourceFrameDataUrl: typeof comment.sourceFrameDataUrl === 'string' ? comment.sourceFrameDataUrl : null,
       screenshotMime: comment.screenshotMime || null,
       annotations: Array.isArray(comment.annotations) ? comment.annotations : [],
       enabled: comment.enabled !== false,

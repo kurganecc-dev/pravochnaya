@@ -215,8 +215,9 @@ export async function renderOverlay(item, settings) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   let screenshot = null;
-  if (item.screenshotDataUrl) {
-    try { screenshot = await loadImage(item.screenshotDataUrl); } catch { screenshot = null; }
+  const screenshotSource = item.sourceFrameDataUrl || item.screenshotDataUrl;
+  if (screenshotSource) {
+    try { screenshot = await loadImage(screenshotSource); } catch { screenshot = null; }
   }
 
   const scale = settings.width / 1920;
